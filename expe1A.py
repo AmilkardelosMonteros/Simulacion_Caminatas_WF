@@ -12,11 +12,11 @@ b2 = 50.0
 u2 = a2/b2#Incremento en S (x)
 
 rep = 5000
-frec_inicial = 0.5
+frec_inicial = 1/100
 x_init = 0
 y_init = 0.5
-nombre = 'Experimento1A_'+'frecuencia_'+str(frec_inicial)+'_u1_'+str(a1)+'%'+str(b1)+'_u2_'+str(a2)+'%'+ str(b2)+'.txt'
-archivo = open(nombre,'w')#Cuidado aqui! Borra y vuele a escribir 
+nombre = 'Experimento1A.txt'
+archivo = open(nombre,'w')#Cuidado aqui! Borra y vuele a escribir
 #Model M1
 def probafixWF(a,y): #para k = 0, (es un WF normal) a es la seleccion y y la frecuencia inicial
     p = (1-np.exp(- 2*a*y))/(1 - np.exp(-2*a))
@@ -44,8 +44,8 @@ def probabilidades(s,k):
     k_gorro = u1/(1-k)
     #print('Transformaciones')
     #print(s_barra,k_gorro)
-    p_mas_mas =  (1 -probafixM1(s_barra_neg/(1-k),k_gorro,frec_inicial))
-    p_mas_menos= (1 - probafixM1(s_barra/(1-k), k_gorro,frec_inicial))
+    p_mas_mas =  (1 -probafixM1(s_barra_neg/(1-k),k_gorro,1-frec_inicial))
+    p_mas_menos= (1 - probafixM1(s_barra/(1-k), k_gorro,1-frec_inicial))
     p_menos_mas = probafixM1(s_barra/(1-k+u1), u1/(1-k+u1),frec_inicial)
     p_menos_menos =  probafixM1(s_barra_neg/(1-k+u1), u1/(1-k+u1),frec_inicial)
     Sum  = p_mas_mas+p_mas_menos+p_menos_menos+p_menos_mas
@@ -53,7 +53,7 @@ def probabilidades(s,k):
     p_menos_mas =  p_menos_mas/Sum
     p_mas_menos =  p_mas_menos/Sum
     p_menos_menos =  p_menos_menos/Sum
-    return [p_mas_mas,p_mas_menos,p_menos_mas,p_menos_menos] 
+    return [p_mas_mas,p_mas_menos,p_menos_mas,p_menos_menos]
 
 
 
@@ -84,6 +84,7 @@ def caminata():
 
 
 for i in range(rep):
+    print(i)
     caminata()
 archivo.close()
 
@@ -98,7 +99,7 @@ def caminata_completa():
             salto = np.random.choice([0,1,2,3],p = P )
             if salto == 0:
                 y.append(y[-1] + u1)
-                x.append(x[-1] + u2) 
+                x.append(x[-1] + u2)
             if salto == 1:
                 y.append(y[-1] + u1)
                 x.append(x[-1] - u2)
