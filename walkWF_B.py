@@ -1,3 +1,4 @@
+from progress.bar import Bar, ChargingBar
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -11,7 +12,7 @@ b2 = 50.0
 u2 = a2/b2#Incremento en S (x)
 rep = 5000
 
-frec_inicial = 0.5
+frec_inicial = 1/100
 x_init = 0
 y_init = (1-u1)/2.0
 
@@ -34,29 +35,27 @@ def probafixM1(a, k, y):
         p = (1/S)* ((1 - k*(1-y))**(1 - 2*a/k)-1)
     return 1-p
 
+
+
 def probabilidades(s,k):
     s_barra =  u2/(1+s)
     s_barra_neg  = -u2/(1+s)
     k_gorro = u1/(1-k)
     p_gorro_mas_mas = probafixWF(s_barra,frec_inicial)
     p_gorro_menos_menos= probafixWF(s_barra_neg,frec_inicial)
-
     u_mas_mas = 1/(4*p_gorro_mas_mas)
     u_menos_mas = u_mas_mas
     u_menos_menos = 1/(4*p_gorro_menos_menos)
     u_mas_menos = u_menos_menos
-
-    p_mas_mas =  u_mas_mas*(1 -probafixM1(s_barra_neg/(1-k),k_gorro,frec_inicial))
-    p_mas_menos= u_mas_menos*(1 - probafixM1(s_barra/(1-k), k_gorro,frec_inicial))
+    p_mas_mas =  u_mas_mas*(1 -probafixM1(s_barra_neg/(1-k),k_gorro,1-frec_inicial))
+    p_mas_menos= u_mas_menos*(1 - probafixM1(s_barra/(1-k), k_gorro,1-frec_inicial))
     p_menos_mas = u_menos_mas*probafixM1(s_barra/(1-k+u1), u1/(1-k+u1),frec_inicial)
     p_menos_menos =  u_menos_menos*probafixM1(s_barra_neg/(1-k+u1), u1/(1-k+u1),frec_inicial)
-
     Sum  = p_mas_mas+p_mas_menos+p_menos_menos+p_menos_mas
     p_mas_mas =  p_mas_mas/Sum
     p_menos_mas =  p_menos_mas/Sum
     p_mas_menos =  p_mas_menos/Sum
     p_menos_menos =  p_menos_menos/Sum
-
     return [p_mas_mas,p_mas_menos,p_menos_mas,p_menos_menos]
 
 
@@ -84,9 +83,15 @@ def caminata():
     np.savetxt(archivo,np.matrix([float(x),float(y)]))
 
 
-nombre = 'Walk_B_'+'frecuencia_'+str(frec_inicial)+'_u1_'+str(a1)+'%'+str(b1)+'_u2_'+str(a2)+'%'+ str(b2)+'.txt'
+nombre = 'WF_m1_expe3B_'+'frecuencia_'+str(frec_inicial)+'_u1_'+str(a1)+'%'+str(b1)+'_u2_'+str(a2)+'%'+ str(b2)+'.txt'
 archivo = open(nombre,'w')
-for i in range(rep):
-    caminata()
 
+
+bar1 = Bar('Procesando:', max=rep)
+for _ in range(rep):
+    caminata()
+    bar1.next()
 archivo.close()
+bar1.finish()
+archivo.close()
+
