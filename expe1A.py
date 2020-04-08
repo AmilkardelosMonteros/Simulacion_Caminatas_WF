@@ -15,7 +15,7 @@ rep = 5000
 frec_inicial = 1/100
 x_init = 0
 y_init = 0.5
-nombre = 'Experimento1A.txt'
+nombre = 'Experimento1A_'+'frecuencia_'+str(frec_inicial)+'_u1_'+str(a1)+'%'+str(b1)+'_u2_'+str(a2)+'%'+ str(b2)+'.txt'
 archivo = open(nombre,'w')#Cuidado aqui! Borra y vuele a escribir
 #Model M1
 def probafixWF(a,y): #para k = 0, (es un WF normal) a es la seleccion y y la frecuencia inicial
