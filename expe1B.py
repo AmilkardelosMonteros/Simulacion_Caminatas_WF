@@ -11,7 +11,7 @@ b2 = 50.0
 u2 = a2/b2#Incremento en S (x)
 rep = 5000
 
-frec_inicial = 0.5
+frec_inicial = 1/100
 x_init = 0
 y_init = (1-u1)/2.0
 
@@ -39,8 +39,8 @@ def probabilidades(s,k):
     s_barra =  u2/(1+s)
     s_barra_neg  = -u2/(1+s)
     k_gorro = u1/(1-k)
-    p_mas_mas =  (1 -probafixM1(s_barra_neg/(1-k),k_gorro,frec_inicial))
-    p_mas_menos= (1 - probafixM1(s_barra/(1-k), k_gorro,frec_inicial))
+    p_mas_mas =  (1 -probafixM1(s_barra_neg/(1-k),k_gorro,1-frec_inicial))
+    p_mas_menos= (1 - probafixM1(s_barra/(1-k), k_gorro,1-frec_inicial))
     p_menos_mas = probafixM1(s_barra/(1-k+u1), u1/(1-k+u1),frec_inicial)
     p_menos_menos =  probafixM1(s_barra_neg/(1-k+u1), u1/(1-k+u1),frec_inicial)
     Sum  = p_mas_mas+p_mas_menos+p_menos_menos+p_menos_mas
@@ -74,8 +74,41 @@ def caminata():
                 x = x - u2
     np.savetxt(archivo,np.matrix([float(x),float(y)]))
 
-nombre = 'Experimento1B_'+'frecuencia_'+str(frec_inicial)+'_u1_'+str(a1)+'%'+str(b1)+'_u2_'+str(a2)+'%'+ str(b2)+'.txt'
+nombre = 'WF_m1_expe1B_'+'frecuencia_'+str(frec_inicial)+'_u1_'+str(a1)+'%'+str(b1)+'_u2_'+str(a2)+'%'+ str(b2)+'.txt'
 archivo = open(nombre,'w')
-for i in range(rep):
+for _ in range(rep):
     caminata()
 archivo.close()
+
+
+def caminatas_completas(n):
+    for _ in range(n):
+        x = [x_init]
+        y = [y_init]
+        while True:
+            if abs(x[-1]) >= 1 or y[-1] > 1-u1 or y[-1] < u1:
+                break
+            else:
+                P =  probabilidades(x[-1],y[-1])
+                salto = np.random.choice([0,1,2,3],p = P )
+                if salto == 0:
+                    y.append(y[-1] + u1)
+                    x.append(x[-1] + u2) 
+                if salto == 1:
+                    y.append(y[-1] + u1)
+                    x.append(x[-1] - u2)
+                if salto == 2:
+                    y.append(y[-1] - u1)
+                    x.append(x[-1] + u2)
+                if salto == 3:
+                    y.append(y[-1] - u1)
+                    x.append(x[-1] - u2)
+    #return x,y
+        plt.xlim(-1,1)
+        plt.ylim(0,1)
+        plt.plot(x,y,alpha = 0.5)
+        plt.plot(x[-1],y[-1],'or')
+    plt.show()
+
+
+#caminatas_completas(10)
