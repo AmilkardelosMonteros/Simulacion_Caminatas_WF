@@ -93,7 +93,7 @@ def caminatas_completas(n):
                 salto = np.random.choice([0,1,2,3],p = P )
                 if salto == 0:
                     y.append(y[-1] + u1)
-                    x.append(x[-1] + u2) 
+                    x.append(x[-1] + u2)
                 if salto == 1:
                     y.append(y[-1] + u1)
                     x.append(x[-1] - u2)
