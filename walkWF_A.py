@@ -1,3 +1,4 @@
+
 from progress.bar import Bar, ChargingBar
 import numpy as np
 import matplotlib.pyplot as plt
@@ -89,3 +90,27 @@ for _ in range(rep):
     bar1.next()
 archivo.close()
 bar1.finish()
+
+def caminata_completa():
+    x = [x_init]
+    y = [y_init]
+    while True:
+        if abs(x[-1]) >= 1 or y[-1] > 1-u1 or y[-1] < u1:
+            break
+        else:
+            P = probabilidades(x[-1],y[-1])
+            salto = np.random.choice([0,1,2,3],p = P)
+            if salto == 0:
+                y.append(y[-1] + u1)
+                x.append(x[-1] + u2)
+            if salto == 1:
+                y.append(y[-1] + u1)
+                x.append(x[-1] - u2)
+            if salto == 2:
+                y.append(y[-1] - u1)
+                x.append(x[-1] + u2)
+            if salto == 3:
+                y.append(y[-1] - u1)
+                x.append(x[-1] - u2)
+    return x,y
+
