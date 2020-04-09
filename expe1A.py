@@ -1,3 +1,4 @@
+from progress.bar import Bar, ChargingBar
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -15,8 +16,7 @@ rep = 5000
 frec_inicial = 1/100
 x_init = 0
 y_init = 0.5
-nombre = 'Experimento1A_'+'frecuencia_'+str(frec_inicial)+'_u1_'+str(a1)+'%'+str(b1)+'_u2_'+str(a2)+'%'+ str(b2)+'.txt'
-archivo = open(nombre,'w')#Cuidado aqui! Borra y vuele a escribir
+
 #Model M1
 def probafixWF(a,y): #para k = 0, (es un WF normal) a es la seleccion y y la frecuencia inicial
     p = (1-np.exp(- 2*a*y))/(1 - np.exp(-2*a))
@@ -31,14 +31,12 @@ def probafixM1(a, k, y):
         S = np.log(1.0/(1.0-k))
         p = (1/S)*np.log(1.0/(1.0-k*(1-y)))
     else:
-        S = (1 - k)**(1 - 2*a/k)  - 1
+        S = (1 - k)**(1 - 2*a/k)-1
         p = (1/S)* ((1 - k*(1-y))**(1 - 2*a/k)-1)
     return 1-p
 
 
 def probabilidades(s,k):
-    #print('S y K')
-    #print(s,k)
     s_barra =  u2/(1+s)
     s_barra_neg  = -u2/(1+s)
     k_gorro = u1/(1-k)
@@ -54,7 +52,6 @@ def probabilidades(s,k):
     p_mas_menos =  p_mas_menos/Sum
     p_menos_menos =  p_menos_menos/Sum
     return [p_mas_mas,p_mas_menos,p_menos_mas,p_menos_menos]
-
 
 
 def caminata():
@@ -82,38 +79,43 @@ def caminata():
 
 
 
-
-for i in range(rep):
-    print(i)
+nombre = 'WF_m1_expe1A_'+'frecuencia_'+str(frec_inicial)+'_u1_'+str(a1)+'%'+str(b1)+'_u2_'+str(a2)+'%'+ str(b2)+'.txt'
+archivo = open(nombre,'w')
+bar1 = Bar('Procesando:', max=rep)
+for _ in range(rep):
     caminata()
+    bar1.next()
 archivo.close()
+bar1.finish()
 
-def caminata_completa():
-    x = [x_init]
-    y = [y_init]
-    while True:
-        if abs(x[-1]) >= 1 or y[-1] > 1-u1 or y[-1] < u1:
-            break
-        else:
-            P =  probabilidades(x[-1],y[-1])
-            salto = np.random.choice([0,1,2,3],p = P )
-            if salto == 0:
-                y.append(y[-1] + u1)
-                x.append(x[-1] + u2)
-            if salto == 1:
-                y.append(y[-1] + u1)
-                x.append(x[-1] - u2)
-            if salto == 2:
-                y.append(y[-1] - u1)
-                x.append(x[-1] + u2)
-            if salto == 3:
-                y.append(y[-1] - u1)
-                x.append(x[-1] - u2)
-    return x,y
-    #plt.xlim(-1,1)
-    #plt.ylim(0,1)
-    #plt.plot(x,y)
-    #plt.show()
+def caminatas_completas(n):
+    for _ in range(n):
+        x = [x_init]
+        y = [y_init]
+        while True:
+            if abs(x[-1]) >= 1 or y[-1] > 1-u1 or y[-1] < u1:
+                break
+            else:
+                P =  probabilidades(x[-1],y[-1])
+                salto = np.random.choice([0,1,2,3],p = P )
+                if salto == 0:
+                    y.append(y[-1] + u1)
+                    x.append(x[-1] + u2)
+                if salto == 1:
+                    y.append(y[-1] + u1)
+                    x.append(x[-1] - u2)
+                if salto == 2:
+                    y.append(y[-1] - u1)
+                    x.append(x[-1] + u2)
+                if salto == 3:
+                    y.append(y[-1] - u1)
+                    x.append(x[-1] - u2)
+    #return x,y
+        plt.xlim(-1,1)
+        plt.ylim(0,1)
+        plt.plot(x,y,alpha = 0.01)
+        plt.plot(x[-1],y[-1],'or')
+    plt.show()
 
 
-#caminata_completa()
+#caminatas_completas(100)
