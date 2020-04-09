@@ -94,4 +94,3 @@ for _ in range(rep):
 archivo.close()
 bar1.finish()
 archivo.close()
-
